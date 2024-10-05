@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "name": "CakeOrderingSystem-ReactNative",
+    "slug": "CakeOrderingSystem-ReactNative",
+    "version": "1.0.0",
+    "android": {
+      "package": "com.capstone.cakeorderingsystem"
+    }
+  }
+}
