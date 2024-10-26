@@ -1,10 +1,25 @@
 {
   "expo": {
-    "name": "CakeOrderingSystem-ReactNative",
-    "slug": "CakeOrderingSystem-ReactNative",
+    "name": "Sweet-Treats",
+    "slug": "Sweet-Treats",
+    "splash": {
+      "backgroundColor": "#ffffff"
+    },
     "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/logo.png",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "android": {
-      "package": "com.capstone.cakeorderingsystem"
+      "package": "com.capstone.sweettreats",
+      "googleServicesFile": "./google-services.json"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "359acc72-60be-4ac7-ac5c-5aec24f6a882"
+      }
     }
   }
 }

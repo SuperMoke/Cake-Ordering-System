@@ -67,7 +67,7 @@ export default function HomeScreenPage() {
       <View className="mx-2">
         <TouchableOpacity
           className="mb-6"
-          onPress={() => navigation.navigate("CustomCake")}
+          onPress={() => navigation.navigate("Cake Customization")}
         >
           <View className="bg-[#fb78a0] rounded-xl p-4 flex-row items-center shadow-md">
             <View className="flex-1 pr-4">

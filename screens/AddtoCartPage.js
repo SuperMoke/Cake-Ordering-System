@@ -18,12 +18,14 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView } from "react-native-gesture-handler";
+import { registerForPushNotificationsAsync } from "../notificationHelper";
 
 export default function AddtoCartPage() {
   const [cartItems, setCartItems] = useState([]);
   const [userEmail, setUserEmail] = useState("");
   const [userInfo, setUserInfo] = useState(null);
   const navigation = useNavigation();
+  const [expoPushToken, setExpoPushToken] = useState(null);
 
   useEffect(() => {
     const auth = getAuth();
@@ -31,6 +33,7 @@ export default function AddtoCartPage() {
       if (user) {
         setUserEmail(user.email);
         fetchUserInfo(user.email);
+        registerForNotifications();
       }
     });
 
@@ -52,6 +55,18 @@ export default function AddtoCartPage() {
       }
     } catch (error) {
       console.error("Error fetching user information:", error);
+    }
+  };
+
+  // Register for push notifications
+  const registerForNotifications = async () => {
+    try {
+      const token = await registerForPushNotificationsAsync();
+      if (token) {
+        setExpoPushToken(token);
+      }
+    } catch (error) {
+      console.error("Error registering for push notifications:", error);
     }
   };
 
@@ -94,47 +109,63 @@ export default function AddtoCartPage() {
     try {
       const formatDateTime = () => {
         const now = new Date();
-        const date = now.toLocaleDateString("en-US"); // Format date as MM/DD/YYYY
+        const date = now.toLocaleDateString("en-US");
         let hours = now.getHours();
         const minutes = now.getMinutes();
         const ampm = hours >= 12 ? "PM" : "AM";
         hours = hours % 12;
-        hours = hours ? hours : 12; // the hour '0' should be '12'
+        hours = hours ? hours : 12;
         const strMinutes = minutes < 10 ? "0" + minutes : minutes;
         const time = hours + ":" + strMinutes + " " + ampm;
         return `${date} ${time}`;
       };
 
       const currentDateTime = formatDateTime();
-
-      // Add cart items to orders collection
       const ordersCollection = collection(db, "orders");
+      const orderIds = [];
+
+      // Update userInfo with expoPushToken
+      const updatedUserInfo = {
+        ...userInfo,
+        expoPushToken: expoPushToken,
+      };
+
       for (const item of cartItems) {
-        const { id, ...orderData } = item; // Exclude the id field
-        await addDoc(ordersCollection, {
+        const { id, ...orderData } = item;
+        const orderDocRef = await addDoc(ordersCollection, {
           ...orderData,
-          userInfo,
+          userInfo: updatedUserInfo,
           status: "Pending",
           orderDateTime: currentDateTime,
         });
+        orderIds.push(orderDocRef.id);
       }
 
-      // Clear cart items
       const cartItemIds = cartItems.map((item) => item.id);
       for (const itemId of cartItemIds) {
         await deleteDoc(doc(db, "cart", itemId));
       }
-
       setCartItems([]);
-      alert("Checkout successful!");
+
+      const orderDataWithIds = cartItems.map((item, index) => ({
+        ...item,
+        orderId: orderIds[index],
+      }));
+
+      navigation.navigate("PaymentScreen", {
+        orderData: orderDataWithIds,
+        totalPrice: totalPrice.toFixed(2),
+      });
     } catch (error) {
       console.error("Error during checkout:", error);
     }
   };
 
   const renderCartItem = ({ item }) => {
+    const isCustomized = item.cakeName === "Customized Cake";
+
     return (
-      <View className="bg-white rounded-xl mb-5 shadow-lg ">
+      <View className="bg-white rounded-xl mb-5 shadow-lg">
         <View className="flex flex-row">
           <Image
             source={{ uri: item.cakeImage }}
@@ -142,13 +173,13 @@ export default function AddtoCartPage() {
             resizeMode="contain"
           />
           <View className="p-4">
-            <View className="flex flex-row ">
+            <View className="flex flex-row">
               <Text className="text-base font-bold mb-1 text-gray-700">
                 {item.cakeName}
               </Text>
               <TouchableOpacity
                 onPress={() => handleRemoveItem(item.id)}
-                className="ml-14"
+                className="ml-10"
               >
                 <Ionicons name="trash-outline" size={22} color="#FF6B6B" />
               </TouchableOpacity>
@@ -156,34 +187,68 @@ export default function AddtoCartPage() {
             <Text className="text-base font-semibold text-[#fb78a0] mb-2">
               ₱{item.cakePrice}
             </Text>
-
             <Text className="text-base text-gray-600 mb-1">
-              {item.cakeSize}
+              Size: {item.cakeSize}
             </Text>
-            <View className="flex flex-row">
-              <Image
-                source={require("../assets/calories.png")}
-                style={{ width: 18, height: 18 }}
-              />
-              <Text className="text-base text-gray-600">
-                {item.cakeCalories} calories
-              </Text>
-            </View>
           </View>
         </View>
         <View className="mx-4 my-4">
-          <Text className="text-base text-gray-600 mb-1">
-            Filling: {item.cakeFilling}
-          </Text>
-          <Text className="text-base text-gray-600 mb-1">
-            Frosting: {item.cakeFrosting}
-          </Text>
-          <Text className="text-base text-gray-600 mb-1">
-            Sugar Content: {item.cakeSugar}
-          </Text>
-          <Text className="text-base text-gray-600 italic mt-1">
-            Special Instructions: {item.SpecialInstruction}
-          </Text>
+          {isCustomized ? (
+            <>
+              {item.cakeToppings && (
+                <Text className="text-base text-gray-600 mb-1">
+                  Toppings: {item.cakeToppings}
+                </Text>
+              )}
+              {item.cakeIcingColor && (
+                <Text className="text-base text-gray-600 mb-1">
+                  Icing Color: {item.cakeIcingColor}
+                </Text>
+              )}
+              {item.cakeFilling && (
+                <Text className="text-base text-gray-600 mb-1">
+                  Filling: {item.cakeFilling}
+                </Text>
+              )}
+              {item.cakeSugarLevel && (
+                <Text className="text-base text-gray-600 mb-1">
+                  Sugar Level: {item.cakeSugarLevel}%
+                </Text>
+              )}
+              {item.isGlutenFree && (
+                <Text className="text-base text-gray-600 mb-1">
+                  Gluten Free: Yes
+                </Text>
+              )}
+              {item.addOns && (
+                <Text className="text-base text-gray-600 mb-1">
+                  Add-ons:{" "}
+                  {Object.entries(item.addOns)
+                    .filter(([_, value]) => value)
+                    .map(([key]) => key)
+                    .join(", ")}
+                </Text>
+              )}
+            </>
+          ) : (
+            <>
+              {item.cakeSugar && (
+                <Text className="text-base text-gray-600 mb-1">
+                  Sugar Content: {item.cakeSugar}
+                </Text>
+              )}
+              {item.cakeCalories && (
+                <Text className="text-base text-gray-600 mb-1">
+                  Calories: {item.cakeCalories}
+                </Text>
+              )}
+            </>
+          )}
+          {item.specialInstruction && (
+            <Text className="text-base text-gray-600 italic mt-1">
+              Special Instructions: {item.specialInstruction}
+            </Text>
+          )}
         </View>
       </View>
     );

@@ -114,7 +114,7 @@ const CakeMenuPage = ({ route }) => {
       <View className="flex-1 mt-72">
         <ScrollView className="flex-1 bg-white rounded-t-[30px] px-5 pt-5">
           <View className="flex flex-row justify-between mb-2">
-            <Text className="text-3xl font-bold ">{cake.cakename}</Text>
+            <Text className="text-2xl font-bold ">{cake.cakename}</Text>
             <View className="flex flex-row">
               <Image
                 source={require("../assets/calories.png")}

@@ -3,10 +3,12 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import { useNavigation } from "@react-navigation/native";
 import { View, TouchableOpacity, Image, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import HomeScreenPage from "../HomeScreenPage";
-import InquiryScreenPage from "../InquiryScreenPage";
-import ProfileScreenPage from "../ProfileScreenPage";
-import OrderPage from "../OrderPage";
+
+import AdminHomePage from "../AdminPages/AdminHomePage";
+import AdminOrderScreen from "../AdminPages/AdminOrderScreen";
+import AdminMessageScreen from "../AdminPages/AdminMessageScreen";
+import AdminProductScreen from "../AdminPages/AdminProductScreen";
+
 import {
   DrawerContentScrollView,
   DrawerItemList,
@@ -75,7 +77,7 @@ function CustomDrawerContent(props) {
   );
 }
 
-export default function DrawerNavigator() {
+export default function DrawerNavigator_Admin() {
   return (
     <Drawer.Navigator
       drawerContent={(props) => <CustomDrawerContent {...props} />}
@@ -95,59 +97,40 @@ export default function DrawerNavigator() {
     >
       <Drawer.Screen
         name="Home"
-        component={HomeScreenPage}
+        component={AdminHomePage}
         options={({ navigation }) => ({
           headerTitle: "Home",
-          headerRight: () => (
-            <View className="flex-row mr-5">
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate("ChatScreen", {
-                    adminID: "e1CRdb7FzJbA3GnCkEZo7LHWhH63",
-                    adminName: "Seller",
-                  })
-                }
-              >
-                <Ionicons name="chatbox-outline" size={26} color="black" />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => navigation.navigate("Cart Items")}
-                className="ml-5"
-              >
-                <Ionicons name="cart-outline" size={30} color="black" />
-              </TouchableOpacity>
-            </View>
-          ),
           drawerIcon: ({ color, size }) => (
             <Ionicons name="home-outline" size={size} color={color} />
           ),
         })}
       />
       <Drawer.Screen
-        name="Profile"
-        component={ProfileScreenPage}
+        name="Chat"
+        component={AdminMessageScreen}
         options={{
           drawerIcon: ({ color, size }) => (
-            <Ionicons name="person-outline" size={size} color={color} />
+            <Ionicons name="chatbox-outline" size={size} color={color} />
           ),
         }}
       />
       <Drawer.Screen
         name="Order"
-        component={OrderPage}
+        component={AdminOrderScreen}
         options={{
+          headerTitle: "Order",
           drawerIcon: ({ color, size }) => (
             <Ionicons name="cube-outline" size={size} color={color} />
           ),
         }}
       />
-
       <Drawer.Screen
-        name="Inquiries"
-        component={InquiryScreenPage}
+        name="Product"
+        component={AdminProductScreen}
         options={{
+          headerTitle: "Signature Cake",
           drawerIcon: ({ color, size }) => (
-            <Ionicons name="help-circle-outline" size={size} color={color} />
+            <Ionicons name="storefront-outline" size={size} color={color} />
           ),
         }}
       />

@@ -85,7 +85,7 @@ export default function RegisterScreenPage() {
         mode="contained"
         className="mb-5 py-1  w-full"
         labelStyle={{ fontSize: 18 }}
-        buttonColor="#DB6551"
+        buttonColor="#f13a72"
         onPress={handleRegister}
       >
         Register

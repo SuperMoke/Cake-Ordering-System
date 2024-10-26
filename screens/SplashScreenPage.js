@@ -7,24 +7,31 @@ export default function SplashScreenPage() {
   const navigation = useNavigation();
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Image 
-        source={require('../assets/logo.png')}
-        className="w-72 h-72"
-      />
-      <View style={{ position: 'absolute', bottom: 50 }}>
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <Image source={require("../assets/logo.png")} className="w-72 h-72" />
+      <View style={{ position: "absolute", bottom: 50 }}>
         <Button
           mode="contained"
-          style={{ marginBottom: 10, paddingVertical: 10, paddingHorizontal: 20, width: 256 }}
+          style={{
+            marginBottom: 10,
+            paddingVertical: 10,
+            paddingHorizontal: 20,
+            width: 256,
+          }}
           labelStyle={{ fontSize: 18 }}
-          buttonColor="#DB6551"
+          buttonColor="#f13a72"
           onPress={() => navigation.navigate("LoginScreenPage")}
         >
           Login
         </Button>
         <Button
           mode="outlined"
-          style={{ paddingVertical: 10, paddingHorizontal: 20, width: 256, borderColor: "#DB6551" }}
+          style={{
+            paddingVertical: 10,
+            paddingHorizontal: 20,
+            width: 256,
+            borderColor: "#f13a72",
+          }}
           labelStyle={{ fontSize: 18 }}
           onPress={() => navigation.navigate("BlankHomePage")}
         >
