@@ -74,3 +74,7 @@ yarn-error.*
 *.tsbuildinfo
 
 # @end expo-cli
+
+#credentials
+google-services.json
+aiahs-sweet-treat-firebase-adminsdk-tyht9-af35595723.json
