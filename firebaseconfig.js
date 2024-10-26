@@ -3,15 +3,24 @@ import { getFirestore } from "firebase/firestore";
 import { initializeAuth, getReactNativePersistence } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getStorage } from "firebase/storage";
+import {
+  FIREBASE_API_KEY,
+  FIREBASE_AUTH_DOMAIN,
+  FIREBASE_PROJECT_ID,
+  FIREBASE_STORAGE_BUCKET,
+  FIREBASE_MESSAGING_SENDER_ID,
+  FIREBASE_APP_ID,
+  FIREBASE_MEASUREMENT_ID,
+} from "@env";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyARxMigk4VDt45dlgOeTppCmTs22BHj3T4",
-  authDomain: "aiahs-sweet-treat.firebaseapp.com",
-  projectId: "aiahs-sweet-treat",
-  storageBucket: "aiahs-sweet-treat.appspot.com",
-  messagingSenderId: "875516822673",
-  appId: "1:875516822673:web:6ade153966ad9c3d31eb30",
-  measurementId: "G-BPKTC1KV2T",
+  apiKey: FIREBASE_API_KEY,
+  authDomain: FIREBASE_AUTH_DOMAIN,
+  projectId: FIREBASE_PROJECT_ID,
+  storageBucket: FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: FIREBASE_MESSAGING_SENDER_ID,
+  appId: FIREBASE_APP_ID,
+  measurementId: FIREBASE_MEASUREMENT_ID,
 };
 
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
